@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Voice - Voice Cloner{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="card-title mb-4">
+                    <i class="bi bi-mic-fill"></i> Create New Voice
+                </h2>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Profile Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Voice Profile</label>
+                        <select name="profile" class="form-select" required>
+                            <option value="">Select a profile...</option>
+                            {% for profile in profiles %}
+                            <option value="{{ profile.id }}">{{ profile.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Text Input -->
+                    <div class="mb-3">
+                        <label class="form-label">Text to Convert</label>
+                        {{ form.text }}
+                        <small class="text-muted">Enter the text you want to convert to speech</small>
+                    </div>
+
+                    <!-- Voice Settings -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Speed: <span id="speed-value">150</span> WPM</label>
+                            <input type="range" class="form-range" name="speed" min="50" max="300" value="150"
+                                id="speed-slider">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Pitch: <span id="pitch-value">50</span></label>
+                            <input type="range" class="form-range" name="pitch" min="0" max="100" value="50"
+                                id="pitch-slider">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Volume: <span id="volume-value">1.0</span></label>
+                            <input type="range" class="form-range" name="volume" min="0" max="1" step="0.1" value="1.0"
+                                id="volume-slider">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-play-circle"></i> Generate Voice
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Update slider values
+    document.getElementById('speed-slider').addEventListener('input', function () {
+        document.getElementById('speed-value').textContent = this.value;
+    });
+    document.getElementById('pitch-slider').addEventListener('input', function () {
+        document.getElementById('pitch-value').textContent = this.value;
+    });
+    document.getElementById('volume-slider').addEventListener('input', function () {
+        document.getElementById('volume-value').textContent = this.value;
+    });
+</script>
+{% endblock %}

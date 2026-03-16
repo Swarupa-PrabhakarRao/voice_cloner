@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Voice Cloner{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-white">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h1>
+        <p class="text-white-50">Welcome back, {{ user.username }}!</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-mic-fill display-4 text-primary"></i>
+                <h3 class="mt-3">{{ total_voices }}</h3>
+                <p class="text-muted">Total Voices</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-folder-fill display-4 text-success"></i>
+                <h3 class="mt-3">{{ total_profiles }}</h3>
+                <p class="text-muted">Voice Profiles</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-clock-fill display-4 text-info"></i>
+                <h3 class="mt-3">Active</h3>
+                <p class="text-muted">Account Status</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{% url 'create_voice' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create New Voice
+                    </a>
+                    <a href="{% url 'voice_list' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-list-ul"></i> View All Voices
+                    </a>
+                    <a href="{% url 'create_profile' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-folder-plus"></i> New Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Voices -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Recent Voices</h5>
+                {% if recent_voices %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Text</th>
+                                <th>Profile</th>
+                                <th>Duration</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for voice in recent_voices %}
+                            <tr>
+                                <td>{{ voice.text|truncatewords:10 }}</td>
+                                <td>{{ voice.profile.name }}</td>
+                                <td>{{ voice.duration }}s</td>
+                                <td>{{ voice.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'download_voice' voice.id %}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No voices yet. Create your first voice!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

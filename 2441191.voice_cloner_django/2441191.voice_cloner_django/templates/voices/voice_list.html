@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}My Voices - Voice Cloner{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-white">
+            <i class="bi bi-music-note-list"></i> My Voices
+        </h1>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <form method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search voices..."
+                value="{{ search_query }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" onchange="window.location.href='?profile='+this.value">
+            <option value="">All Profiles</option>
+            {% for profile in profiles %}
+            <option value="{{ profile.id }}" 
+    {% if selected_profile|stringformat:"s" == profile.id|stringformat:"s" %}selected{% endif %}>
+    {{ profile.name }}
+</option>
+
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Voices List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if voices %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Text</th>
+                                <th>Profile</th>
+                                <th>Duration</th>
+                                <th>Settings</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for voice in voices %}
+                            <tr>
+                                <td>{{ voice.text|truncatewords:15 }}</td>
+                                <td><span class="badge bg-info">{{ voice.profile.name }}</span></td>
+                                <td>{{ voice.duration }}s</td>
+                                <td>
+                                    <small>
+                                        Speed: {{ voice.speed }} |
+                                        Pitch: {{ voice.pitch }} |
+                                        Vol: {{ voice.volume }}
+                                    </small>
+                                </td>
+                                <td>{{ voice.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        {% if voice.audio_file %}
+                                        <button class="btn btn-success"
+                                            onclick="playAudio('{{ voice.audio_file.url }}')">
+                                            <i class="bi bi-play-fill"></i>
+                                        </button>
+                                        <a href="{% url 'download_voice' voice.id %}" class="btn btn-primary">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                        {% endif %}
+                                        <a href="{% url 'delete_voice' voice.id %}" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="text-muted mt-3">No voices found. Create your first voice!</p>
+                    <a href="{% url 'create_voice' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create Voice
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Audio Player Modal -->
+<div class="modal fade" id="audioModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Play Voice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <audio id="audioPlayer" controls class="w-100">
+                    <source id="audioSource" src="" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function playAudio(url) {
+        const modal = new bootstrap.Modal(document.getElementById('audioModal'));
+        document.getElementById('audioSource').src = url;
+        document.getElementById('audioPlayer').load();
+        modal.show();
+    }
+</script>
+{% endblock %}
