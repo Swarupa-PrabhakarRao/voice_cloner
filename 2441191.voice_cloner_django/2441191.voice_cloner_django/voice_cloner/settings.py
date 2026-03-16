@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-=u8!+jyg^l52x)0yqr-rz3yc^9u)0w%x39ia-c%s$zu=-d150r"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['voice-cloner-qyyt.onrender.com']
 
 
 # Application definition
